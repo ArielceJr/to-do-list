@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, ToastAndroid } from 'react-native';
 import "../../styles/global.css";
 import { Link } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
   const [task, setTask] = useState('');
@@ -9,9 +10,23 @@ export default function App() {
   const [tasks, setTasks] = useState<{ text: string; date: string }[]>([]);
   const [doneTasks, setDoneTasks] = useState<{ text: string; date: string; doneAt: string }[]>([]);
 
+  React.useEffect(() => {
+    const loadData = async () => {
+      const tasksData = await AsyncStorage.getItem('tasks');
+      const doneTasksData = await AsyncStorage.getItem('doneTasks');
+      if (tasksData) setTasks(JSON.parse(tasksData));
+      if (doneTasksData) setDoneTasks(JSON.parse(doneTasksData));
+    };
+    loadData();
+    }, []);
+
+  React.useEffect(() => {
+    AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
  const addTask = () => {
   if (task=='' || date=='') {
-      ToastAndroid.show('Por favor, preencha tasks os campos!', ToastAndroid.SHORT);
+      ToastAndroid.show('Por favor, preencha todos os campos!', ToastAndroid.SHORT);
       return;
     }
     setTasks([...tasks, { text: task, date: date }]);
@@ -25,14 +40,19 @@ export default function App() {
     ToastAndroid.show('Tarefa removida com sucesso!', ToastAndroid.SHORT);
   };
 
-  const markTaskAsDone = (index: number) => {
-    const completedTask = tasks[index];
-    const today = new Date();
-    const doneAt = today.toLocaleDateString();
-    setDoneTasks([...doneTasks, { ...completedTask, doneAt }]);
-    removeTask(index);
-    ToastAndroid.show('Tarefa marcada como concluída!', ToastAndroid.SHORT);
-  };
+  const markTaskAsDone = async (index: number) => {
+  const completedTask = tasks[index];
+  const today = new Date();
+  const doneAt = today.toLocaleDateString();
+  const newDoneTask = { ...completedTask, doneAt };
+  const doneTasksData = await AsyncStorage.getItem('doneTasks');
+  const currentDoneTasks = doneTasksData ? JSON.parse(doneTasksData) : [];
+  const updatedDoneTasks = [...currentDoneTasks, newDoneTask];
+  setDoneTasks(updatedDoneTasks);
+  setTasks(tasks.filter((_, i) => i !== index));
+  await AsyncStorage.setItem('doneTasks', JSON.stringify(updatedDoneTasks));
+  ToastAndroid.show('Tarefa marcada como concluída!', ToastAndroid.SHORT);
+};
 
   return (
     <View className="flex-1 bg-gray-100 p-4 pt-12">
@@ -74,12 +94,9 @@ export default function App() {
       />
      <View className="flex-row items-center justify-center mb-6">
      <Link
-  href={{
-    pathname: '/donetasks',
-    params: { doneTasks: JSON.stringify(doneTasks) }
-  }}
+  href="/donetasks"
   asChild
-    >
+>
   <TouchableOpacity className="bg-green-700 px-4 py-3 rounded-lg mb-4 ">
     <Text className="text-white text-center font-bold">Ver tarefas concluídas</Text>
   </TouchableOpacity>
