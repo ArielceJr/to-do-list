@@ -16,6 +16,7 @@
 <figure>
   <img src="https://github.com/ArielceJr/to-do-list/blob/main/img/home.jpeg" alt="Home">
 </figure>
+
 ### Página de tarefas concluídas:
 <figure>
   <img src="https://github.com/ArielceJr/to-do-list/blob/main/img/screen_donetask.jpeg" alt="Home">
