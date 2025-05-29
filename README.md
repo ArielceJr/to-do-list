@@ -1,5 +1,5 @@
 <h1 align="center">To Do List em React Native</h1>
-<h3 align="center">Esta é uma aplicação de uma lista To Do feita em React Native</h3>
+<h4 align="center">Esta é uma aplicação de uma lista To Do com persistência local feita em React Native</h4>
 
 ### Tecnologias Utilizadas:
 * React Native
