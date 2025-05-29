@@ -12,4 +12,13 @@
 * Remover ou concluir tarefas;
 * Página com as tarefas já concluídas
 
+### Página principal:
+<figure>
+  <img src="https://github.com/ArielceJr/to-do-list/blob/main/img/home.jpeg" alt="Home">
+</figure>
+<figure>
+  <img src="https://github.com/ArielceJr/to-do-list/blob/main/img/screen_donetask.jpeg" alt="Home">
+</figure>
+
+
   
